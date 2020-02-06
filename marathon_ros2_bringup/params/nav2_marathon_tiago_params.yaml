@@ -64,9 +64,6 @@ bt_navigator:
     - nav2_rate_controller_bt_node
     - nav2_recovery_node_bt_node
     - nav2_pipeline_sequence_bt_node
-    - nav2_round_robin_node_bt_node
-    - nav2_battery_warning_action_bt_node
-    - nav2_obstacle_detected_action_bt_node
 
 bt_navigator_rclcpp_node:
   ros__parameters:
