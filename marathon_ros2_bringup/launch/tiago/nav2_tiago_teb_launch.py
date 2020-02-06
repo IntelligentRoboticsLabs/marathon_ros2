@@ -45,7 +45,6 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     bt_xml_file = LaunchConfiguration('bt_xml_file')
     autostart = LaunchConfiguration('autostart')
-    use_remappings = LaunchConfiguration('use_remappings')
     cmd_vel_topic = LaunchConfiguration('cmd_vel_topic')
 
     # Launch configuration variables specific to simulation
@@ -99,10 +98,6 @@ def generate_launch_description():
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
 
-    declare_use_remappings_cmd = DeclareLaunchArgument(
-        'use_remappings', default_value='true',
-        description='Arguments to pass to all nodes launched by the file')
-
     declare_rviz_config_file_cmd = DeclareLaunchArgument(
         'rviz_config_file',
         default_value=os.path.join(nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz'),
@@ -124,7 +119,6 @@ def generate_launch_description():
         node_executable='rviz2',
         arguments=['-d', rviz_config_file],
         output='log',
-        use_remappings=IfCondition(use_remappings),
         remappings=[('/tf', 'tf'),
                     ('/tf_static', 'tf_static'),
                     ('goal_pose', 'goal_pose'),
@@ -145,7 +139,6 @@ def generate_launch_description():
                           'params_file': params_file,
                           'bt_xml_file': bt_xml_file,
                           'autostart': autostart,
-                          'use_remappings': use_remappings,
                           'cmd_vel_topic': cmd_vel_topic}.items())        
 
     # Create the launch description and populate
@@ -159,7 +152,6 @@ def generate_launch_description():
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_bt_xml_cmd)
     ld.add_action(declare_autostart_cmd)
-    ld.add_action(declare_use_remappings_cmd)
 
     ld.add_action(declare_rviz_config_file_cmd)
     ld.add_action(declare_use_rviz_cmd)

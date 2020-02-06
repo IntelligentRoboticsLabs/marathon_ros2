@@ -24,7 +24,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import PushRosNamespace
 
-from nav2_common.launch import Node
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -43,7 +43,6 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     bt_xml_file = LaunchConfiguration('bt_xml_file')
     autostart = LaunchConfiguration('autostart')
-    use_remappings = LaunchConfiguration('use_remappings')
     cmd_vel_topic = LaunchConfiguration('cmd_vel_topic')
 
 
@@ -86,10 +85,6 @@ def generate_launch_description():
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
 
-    declare_use_remappings_cmd = DeclareLaunchArgument(
-        'use_remappings', default_value='false',
-        description='Arguments to pass to all nodes launched by the file')
-
     declare_cmd_vel_topic_cmd = DeclareLaunchArgument(
         'cmd_vel_topic',
         default_value='cmd_vel',
@@ -108,8 +103,7 @@ def generate_launch_description():
                               'use_sim_time': use_sim_time,
                               'autostart': autostart,
                               'params_file': params_file,
-                              'use_lifecycle_mgr': 'true',
-                              'use_remappings': use_remappings}.items()),
+                              'use_lifecycle_mgr': 'true'}.items()),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(marathon_launch_dir, 'nav2_navigation_launch.py')),
@@ -119,7 +113,6 @@ def generate_launch_description():
                               'params_file': params_file,
                               'bt_xml_file': bt_xml_file,
                               'use_lifecycle_mgr': 'true',
-                              'use_remappings': use_remappings,
                               'map_subscribe_transient_local': 'true',
                               'cmd_vel_topic': cmd_vel_topic}.items()),
 
@@ -153,7 +146,6 @@ def generate_launch_description():
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_autostart_cmd)
     ld.add_action(declare_bt_xml_cmd)
-    ld.add_action(declare_use_remappings_cmd)
     ld.add_action(declare_cmd_vel_topic_cmd)
 
     # Add the actions to launch all of the navigation nodes
