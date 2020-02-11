@@ -183,7 +183,6 @@ protected:
   float meters_;
   float total_distance_;
 
-
   rclcpp::Time started_time_;
 
 };
@@ -196,7 +195,7 @@ int main(int argc, char * argv[])
 
   node->firstTime();
 
-  rclcpp::Rate loop_rate(1); //1hz
+  rclcpp::Rate loop_rate(1); 
   while (rclcpp::ok()) {
     node->step();
     rclcpp::spin_some(node);
