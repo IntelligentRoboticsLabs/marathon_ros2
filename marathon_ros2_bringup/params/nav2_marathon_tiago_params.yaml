@@ -31,12 +31,18 @@ amcl:
     sigma_hit: 0.2
     tf_broadcast: true
     transform_tolerance: 1.0
-    update_min_a: 0.2
-    update_min_d: 0.25
+    update_min_a: 0.05
+    update_min_d: 0.1
     z_hit: 0.5
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
+    #set_initial_pose: True
+    #initial_pose:
+    #  x: 10.35
+    #  y: 51.776
+    #  z: 0.0
+    #  yaw: -0.625
 
 amcl_map_client:
   ros__parameters:
@@ -75,44 +81,44 @@ controller_server:
     use_sim_time: True
     controller_frequency: 20.0
     controller_plugin_types: ["dwb_core::DWBLocalPlanner"]
-    controller_plugin_ids: ["FollowPath"]
+    controller_plugin_ids: ["DynamicFollowPath"]
     min_x_velocity_threshold: 0.001
     min_y_velocity_threshold: 0.5
     min_theta_velocity_threshold: 0.001
 
     # DWB parameters
-    FollowPath.debug_trajectory_details: True
-    FollowPath.min_vel_x: 0.0
-    FollowPath.min_vel_y: 0.0
-    FollowPath.max_vel_x: 0.4
-    FollowPath.max_vel_y: 0.0
-    FollowPath.max_vel_theta: 1.0
-    FollowPath.min_speed_xy: 0.0
-    FollowPath.max_speed_xy: 0.4
-    FollowPath.min_speed_theta: 0.0
+    DynamicFollowPath.debug_trajectory_details: True
+    DynamicFollowPath.min_vel_x: 0.0
+    DynamicFollowPath.min_vel_y: 0.0
+    DynamicFollowPath.max_vel_x: 0.36
+    DynamicFollowPath.max_vel_y: 0.0
+    DynamicFollowPath.max_vel_theta: 0.55
+    DynamicFollowPath.min_speed_xy: 0.0
+    DynamicFollowPath.max_speed_xy: 0.26
+    DynamicFollowPath.min_speed_theta: 0.0
     # Add high threshold velocity for turtlebot 3 issue.
     # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-    FollowPath.acc_lim_x: 2.5
-    FollowPath.acc_lim_y: 0.0
-    FollowPath.acc_lim_theta: 2.2
-    FollowPath.decel_lim_y: 0.0
-    FollowPath.decel_lim_theta: -2.2
-    FollowPath.vx_samples: 20
-    FollowPath.vy_samples: 5
-    FollowPath.vtheta_samples: 20
-    FollowPath.sim_time: 1.7
-    FollowPath.linear_granularity: 0.05
-    FollowPath.angular_granularity: 0.025
-    FollowPath.time_granularity: 0.05
-    FollowPath.xy_goal_tolerance: 0.25
-    FollowPath.transform_tolerance: 0.5
-    FollowPath.critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-    FollowPath.BaseObstacle.scale: 0.02
-    FollowPath.PathAlign.scale: 10.0
-    FollowPath.GoalAlign.scale: 10.0
-    FollowPath.PathDist.scale: 3.0
-    FollowPath.GoalDist.scale: 4.0
-    FollowPath.RotateToGoal.scale: 2.0
+    DynamicFollowPath.acc_lim_x: 1.0
+    DynamicFollowPath.acc_lim_y: 0.0
+    DynamicFollowPath.acc_lim_theta: 0.85
+    DynamicFollowPath.decel_lim_y: 0.0
+    DynamicFollowPath.decel_lim_theta: -0.85
+    DynamicFollowPath.vx_samples: 20
+    DynamicFollowPath.vy_samples: 5
+    DynamicFollowPath.vtheta_samples: 20
+    DynamicFollowPath.sim_time: 1.7
+    DynamicFollowPath.linear_granularity: 0.05
+    DynamicFollowPath.angular_granularity: 0.025
+    DynamicFollowPath.time_granularity: 0.05
+    DynamicFollowPath.xy_goal_tolerance: 0.25
+    DynamicFollowPath.transform_tolerance: 0.2
+    DynamicFollowPath.critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+    DynamicFollowPath.BaseObstacle.scale: 0.02
+    DynamicFollowPath.PathAlign.scale: 7.0
+    DynamicFollowPath.GoalAlign.scale: 10.0
+    DynamicFollowPath.PathDist.scale: 3.0
+    DynamicFollowPath.GoalDist.scale: 4.0
+    DynamicFollowPath.RotateToGoal.scale: 2.0
 
 controller_server_rclcpp_node:
   ros__parameters:
@@ -125,14 +131,13 @@ local_costmap:
       publish_frequency: 2.0
       robot_base_frame: base_link
       use_sim_time: True
-      global_frame: odom
       rolling_window: true
       width: 3
       height: 3
       resolution: 0.05
       plugin_names: ["obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.25
+      robot_radius: 0.27
       inflation_layer:
         cost_scaling_factor: 3.0
       obstacle_layer:
@@ -165,21 +170,19 @@ global_costmap:
       plugin_names: [
         "static_layer",
         "obstacle_layer",
-        "stvl_layer",
         "inflation_layer"]
       plugin_types: [
         "nav2_costmap_2d::StaticLayer",
         "nav2_costmap_2d::ObstacleLayer",
-        "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer",
         "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.25
+      robot_radius: 0.27
       resolution: 0.05
       stvl_layer:
         enabled: True
         voxel_decay: 15.0
         decay_model: 0
-        voxel_size: 0.05
-        track_unknown_space: True
+        voxel_size: 0.1
+        track_unknown_space: False
         max_obstacle_height: 2.0
         unknown_threshold: 15
         mark_threshold: 0
@@ -187,7 +190,7 @@ global_costmap:
         combination_method: 1
         obstacle_range: 2.0
         origin_z: 0.0
-        publish_voxel_map: True
+        publish_voxel_map: False
         transform_tolerance: 0.2
         mapping_mode: False
         map_save_duration: 60.0
@@ -199,7 +202,7 @@ global_costmap:
           clearing: True
           min_obstacle_height: 0.15
           max_obstacle_height: 2.0
-          expected_update_rate: 0.0
+          expected_update_rate: 2.0
           observation_persistence: 0.0
           inf_is_valid: False
           voxel_filter: False
@@ -210,6 +213,7 @@ global_costmap:
           horizontal_fov_angle: 1.048
           decay_acceleration: 15.0
           model_type: 0
+
       obstacle_layer:
         enabled: True
         observation_sources: scan
@@ -221,6 +225,9 @@ global_costmap:
           data_type: "LaserScan"
       static_layer:
         map_subscribe_transient_local: True
+      inflation_layer:
+        cost_scaling_factor: 5.0
+        inflation_radius:     1.0
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:
