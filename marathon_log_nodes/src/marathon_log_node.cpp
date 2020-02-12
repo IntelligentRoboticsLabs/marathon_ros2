@@ -64,7 +64,6 @@
 
 #include "tf2_ros/transform_listener.h"
 
-#include "system_modes/msg/mode_event.h"
 #include "builtin_interfaces/msg/time.hpp"
 
 
@@ -81,12 +80,13 @@ class MarathonLogNode : public rclcpp::Node
 {
 public:
   MarathonLogNode()
-  : Node("marathon_log_node"), total_distance_(0.0), meters_(0.0)
+  : Node("marathon_log_node")
   {
     amcl_pose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/amcl_pose", rclcpp::QoS(10), std::bind(&MarathonLogNode::poseAMCLCallback, this, _1)); 
-    distance_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/distance", rclcpp::QoS(10));
     distance_total_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/total_distance", rclcpp::QoS(10));
     time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time", rclcpp::QoS(10));
+    total_distance_ = 0.0;
+    meters_ = 0.0;
   }
 
 
@@ -107,7 +107,7 @@ public:
 
   }
 
-  float calculateDistance(int current_x, int current_y, int old_x, int old_y)
+  float calculateDistance(float current_x, float current_y, float old_x, float old_y)
   {
     return sqrt((pow(current_x - old_x, 2) + pow(current_y - old_y, 2)));
   }
@@ -125,44 +125,29 @@ public:
   
   void poseAMCLCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg) //const
   {
-    int current_x, current_y;//, current_z;
+    float current_x, current_y;
 
     current_x = msg->pose.pose.position.x;
     current_y = msg->pose.pose.position.y;
-    //current_z = msg->pose.pose.position.z;
 
     meters_ = calculateDistance(current_x, current_y, old_x, old_y);
-
     setOldposition(current_x, current_y);
-/*
-    float miles = metersToMiles(meters);
-
-    std_msgs::msg::Float64 dist;
-    dist.data = miles;
-
-    amcl_pub_->publish(dist);
-    */
-  
-  }
-
-  void step()
-  {
-    calculateTimeNavigating();
-
     float miles = metersToMiles(meters_);
 
-    std_msgs::msg::Float64 dist;
-    dist.data = miles;
-
-    distance_pub_->publish(dist);
-
-    total_distance_+= miles;
+    total_distance_ += miles;
 
     std_msgs::msg::Float64 total_dist;
     total_dist.data = total_distance_;
 
     distance_total_pub_->publish(total_dist);
 
+    meters_ = 0.0;
+  
+  }
+
+  void step()
+  {
+    calculateTimeNavigating();
   }
 
   void firstTime(){
@@ -171,7 +156,7 @@ public:
 
 
 protected:
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_pub_, distance_total_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_total_pub_;
   rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr time_pub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr amcl_pose_sub_;
 
@@ -179,7 +164,7 @@ protected:
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   rclcpp::TimerBase::SharedPtr timer_;
     
-  int old_x, old_y, old_z;
+  float old_x, old_y;
   float meters_;
   float total_distance_;
 

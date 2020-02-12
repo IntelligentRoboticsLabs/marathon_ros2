@@ -29,7 +29,7 @@ def generate_launch_description():
     # Create the launch configuration variables
     params_file = LaunchConfiguration('params_file')
     autostart = LaunchConfiguration('autostart')
-
+   
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_kobuki_params.yaml'),
@@ -46,23 +46,31 @@ def generate_launch_description():
             'rplidar.launch.py'))
         )
 
-    #realsense_node = launch_ros.actions.Node(
-    #        package='realsense_ros2_camera',
-    #        node_executable='realsense_ros2_camera',
-    #        node_name='realsense_ros2_camera',
-    #        output='screen')
-
+    astra_node = launch_ros.actions.Node(
+            package='astra_camera',
+            node_executable='astra_camera_node',
+            node_name='astra_camera_node',
+            output='screen',
+            parameters=[
+              {'width': 1280},
+              {'height': 1024},
+              {'framerate': 30.0}])
 
     kobuki_node = launch_ros.actions.Node(
       package='turtlebot2_drivers',
       node_executable='kobuki_node',
+      output='screen')
+    
+    depth_to_pointcloud2_node = launch_ros.actions.Node(
+      package='depthimage_to_pointcloud2',
+      node_executable='depthimage_to_pointcloud2_node',
       output='screen')
 
     tf_kobuki2laser_node = launch_ros.actions.Node(
       package='tf2_ros',
       node_executable='static_transform_publisher',
       output='screen',
-      arguments=['0.11', '0.0', '0.17',
+      arguments=['0.0', '0.0', '0.40',
                  '0', '1', '0', '0',
                  'base_link',
                  'laser_frame'])
@@ -79,7 +87,22 @@ def generate_launch_description():
                  '0', '0', '0', '1',
                  'base_link',
                  'imu_link'])
-
+    tf_kobuki2camera_node = launch_ros.actions.Node(
+      package='tf2_ros',
+      node_executable='static_transform_publisher',
+      output='screen',
+      arguments=['0.12', '0.0', '0.22',
+                 '0', '0', '0', '1',
+                 'base_link',
+                 'openni_color_optical_frame'])
+    tf_kobuki2depth_node = launch_ros.actions.Node(
+      package='tf2_ros',
+      node_executable='static_transform_publisher',
+      output='screen',
+      arguments=['0.12', '0.0', '0.22',
+                 '-0.5', '0.5', '-0.5', '0.5',
+                 'base_link',
+                 'openni_depth_optical_frame'])
     nav2_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(
             get_package_share_directory('marathon_ros2_bringup'), 'launch/tiago',
@@ -90,14 +113,21 @@ def generate_launch_description():
               'cmd_vel_topic': '/cmd_vel'
             }.items())
 
+    log_node = launch_ros.actions.Node(
+    package='marathon_log_nodes',
+    node_executable='marathon_log_node')
 
     return launch.LaunchDescription([
         declare_params_file_cmd,
         rplidar_cmd,
         laserfilter_node,
-        #realsense_node,
+        astra_node,
+        depth_to_pointcloud2_node,
         kobuki_node,
         tf_kobuki2laser_node,
         tf_kobuki2imu_node,
-        nav2_cmd
+        tf_kobuki2camera_node,
+        tf_kobuki2depth_node,
+        nav2_cmd,
+        log_node
 ])
