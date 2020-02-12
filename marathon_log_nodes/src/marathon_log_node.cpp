@@ -125,23 +125,31 @@ public:
   
   void poseAMCLCallback(const geometry_msgs::msg::PoseWithCovarianceStamped::SharedPtr msg) //const
   {
-    int current_x, current_y;//, current_z;
+    int current_x, current_y;
 
     current_x = msg->pose.pose.position.x;
     current_y = msg->pose.pose.position.y;
-    //current_z = msg->pose.pose.position.z;
 
     meters_ = calculateDistance(current_x, current_y, old_x, old_y);
 
     setOldposition(current_x, current_y);
-/*
-    float miles = metersToMiles(meters);
 
+    float miles = metersToMiles(meters_);
+/*
     std_msgs::msg::Float64 dist;
     dist.data = miles;
 
     amcl_pub_->publish(dist);
     */
+
+    total_distance_+= miles;
+
+    std_msgs::msg::Float64 total_dist;
+    total_dist.data = total_distance_;
+
+    distance_total_pub_->publish(total_dist);
+
+    meters_ = 0.0;
   
   }
 
@@ -155,7 +163,7 @@ public:
     dist.data = miles;
 
     distance_pub_->publish(dist);
-
+/*
     total_distance_+= miles;
 
     std_msgs::msg::Float64 total_dist;
@@ -163,6 +171,8 @@ public:
 
     distance_total_pub_->publish(total_dist);
 
+    meters_ = 0.0;
+*/
   }
 
   void firstTime(){
