@@ -25,7 +25,6 @@ find_package(rclcpp_action REQUIRED)
 find_package(rcl_lifecycle REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-find_package(system_modes REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 # uncomment the following section in order to fill in
@@ -45,7 +44,6 @@ set(dependencies
   lifecycle_msgs
   rcl_lifecycle
   geometry_msgs
-  system_modes
 )
 
 if(BUILD_TESTING)

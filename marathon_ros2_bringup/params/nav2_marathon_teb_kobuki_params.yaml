@@ -80,46 +80,29 @@ bt_navigator_rclcpp_node:
 controller_server:
   ros__parameters:
     use_sim_time: True
-    controller_frequency: 20.0
-    controller_plugin_types: ["dwb_core::DWBLocalPlanner"]
+    controller_frequency: 20
+    controller_plugin_types: ["teb_local_planner::TebLocalPlannerROS"]
     controller_plugin_ids: ["DynamicFollowPath"]
-    min_x_velocity_threshold: 0.001
-    min_y_velocity_threshold: 0.5
-    min_theta_velocity_threshold: 0.001
-
-    # DWB parameters
-    DynamicFollowPath.debug_trajectory_details: True
-    DynamicFollowPath.min_vel_x: 0.0
-    DynamicFollowPath.min_vel_y: 0.0
-    DynamicFollowPath.max_vel_x: 0.36
-    DynamicFollowPath.max_vel_y: 0.0
-    DynamicFollowPath.max_vel_theta: 2.04
-    DynamicFollowPath.min_speed_xy: 0.0
-    DynamicFollowPath.max_speed_xy: 0.26
-    DynamicFollowPath.min_speed_theta: 0.0
-    # Add high threshold velocity for turtlebot 3 issue.
-    # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
-    DynamicFollowPath.acc_lim_x: 1.0
-    DynamicFollowPath.acc_lim_y: 0.0
+    DynamicFollowPath.footprint_model.type: circular
+    DynamicFollowPath.footprint_model.radius: 0.28
+    DynamicFollowPath.min_obstacle_dist: 0.1
+    DynamicFollowPath.inflation_dist: 0.1
+    DynamicFollowPath.costmap_converter_plugin: costmap_converter::CostmapToPolygonsDBSMCCH
+    DynamicFollowPath.costmap_converter_spin_thread: True
+    DynamicFollowPath.costmap_converter_rate: 15
+    DynamicFollowPath.enable_homotopy_class_planning: True
+    DynamicFollowPath.enable_multithreading: True
+    #DynamicFollowPath.weight_obstacle: 100.0
+    DynamicFollowPath.optimization_verbose: False
+    DynamicFollowPath.teb_autoresize: True
+    DynamicFollowPath.min_samples: 3
+    DynamicFollowPath.max_samples: 20
+    DynamicFollowPath.max_global_plan_lookahead_dist: 1.0
+    DynamicFollowPath.visualize_hc_graph: True
+    DynamicFollowPath.max_vel_x: 0.4
+    DynamicFollowPath.max_vel_theta: 1.0
+    DynamicFollowPath.acc_lim_x: 2.5
     DynamicFollowPath.acc_lim_theta: 3.2
-    DynamicFollowPath.decel_lim_y: 0.0
-    DynamicFollowPath.decel_lim_theta: -3.2
-    DynamicFollowPath.vx_samples: 20
-    DynamicFollowPath.vy_samples: 5
-    DynamicFollowPath.vtheta_samples: 20
-    DynamicFollowPath.sim_time: 1.7
-    DynamicFollowPath.linear_granularity: 0.05
-    DynamicFollowPath.angular_granularity: 0.025
-    DynamicFollowPath.time_granularity: 0.05
-    DynamicFollowPath.xy_goal_tolerance: 0.25
-    DynamicFollowPath.transform_tolerance: 0.2
-    DynamicFollowPath.critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
-    DynamicFollowPath.BaseObstacle.scale: 0.02
-    DynamicFollowPath.PathAlign.scale: 10.0
-    DynamicFollowPath.GoalAlign.scale: 10.0
-    DynamicFollowPath.PathDist.scale: 3.0
-    DynamicFollowPath.GoalDist.scale: 4.0
-    DynamicFollowPath.RotateToGoal.scale: 2.0
 
 controller_server_rclcpp_node:
   ros__parameters:
