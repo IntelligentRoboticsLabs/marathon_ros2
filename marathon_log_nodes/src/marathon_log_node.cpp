@@ -86,6 +86,9 @@ public:
     distance_total_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/total_distance", rclcpp::QoS(10));
     time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time", rclcpp::QoS(10));
     total_distance_ = 0.0;
+
+    this->declare_parameter("total_distance_sum");
+    total_distance_ = this->get_parameter("total_distance_sum").get_value<float>();
     meters_ = 0.0;
   }
 

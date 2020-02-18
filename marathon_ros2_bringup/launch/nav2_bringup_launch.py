@@ -47,7 +47,7 @@ def generate_launch_description():
 
 
     stdout_linebuf_envvar = SetEnvironmentVariable(
-        'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '1')
+        'RCUTILS_CONSOLE_STDOUT_LINE_BUFFERED', '0')
 
     declare_namespace_cmd = DeclareLaunchArgument(
         'namespace',

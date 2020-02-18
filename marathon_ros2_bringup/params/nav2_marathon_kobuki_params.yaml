@@ -250,7 +250,7 @@ planner_server:
     planner_plugin_ids: ["GridBased"]
     use_sim_time: True
     GridBased.tolerance: 2.0
-    GridBased.use_astar: false
+    GridBased.use_astar: true
     GridBased.allow_unknown: true
 
 planner_server_rclcpp_node:

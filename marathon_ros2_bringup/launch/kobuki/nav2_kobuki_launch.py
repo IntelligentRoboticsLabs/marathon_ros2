@@ -28,6 +28,9 @@ def generate_launch_description():
 
     # Create the launch configuration variables
     params_file = LaunchConfiguration('params_file')
+    total_distance_sum = LaunchConfiguration('total_distance_sum')
+    next_wp = LaunchConfiguration('next_wp')
+
     autostart = LaunchConfiguration('autostart')
    
     declare_params_file_cmd = DeclareLaunchArgument(
@@ -38,6 +41,16 @@ def generate_launch_description():
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
+
+    declare_total_distance_sum_cmd = DeclareLaunchArgument(
+        'total_distance_sum',
+        default_value= '0.25',
+        description='The distance accumulated in the experiment')
+
+    declare_next_wp_cmd = DeclareLaunchArgument(
+        'next_wp',
+        default_value= '0',
+        description='Next waypoint for the navigation system')
 
     rplidar_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(
@@ -114,11 +127,23 @@ def generate_launch_description():
             }.items())
 
     log_node = launch_ros.actions.Node(
-    package='marathon_log_nodes',
-    node_executable='marathon_log_node')
+      package='marathon_log_nodes',
+      node_executable='marathon_log_node',
+      parameters=[
+      {'total_distance_sum': total_distance_sum}]
+    )
+
+    wp_manager_node = launch_ros.actions.Node(
+      package='marathon_ros2_wp_manager',
+      node_executable='wp_manager_node',
+      parameters=[
+      {'next_wp': next_wp}]
+    )
 
     return launch.LaunchDescription([
         declare_params_file_cmd,
+        declare_total_distance_sum_cmd,
+        declare_next_wp_cmd,
         rplidar_cmd,
         laserfilter_node,
         astra_node,
@@ -129,5 +154,6 @@ def generate_launch_description():
         tf_kobuki2camera_node,
         tf_kobuki2depth_node,
         nav2_cmd,
-        log_node
+        log_node,
+        wp_manager_node
 ])

@@ -78,7 +78,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_tiago_params.yaml'),
+        default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_kobuki_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     #declare_params_file_cmd = DeclareLaunchArgument(
@@ -108,7 +108,7 @@ def generate_launch_description():
         description='Whether to start RVIZ')
     declare_cmd_vel_topic_cmd = DeclareLaunchArgument(
         'cmd_vel_topic',
-        default_value='cmd_vel_mux',
+        default_value='nav_vel',
         description='Command velocity topic')
 
 
