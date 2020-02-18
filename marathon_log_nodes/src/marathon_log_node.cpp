@@ -84,7 +84,9 @@ public:
   {
     amcl_pose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/amcl_pose", rclcpp::QoS(10), std::bind(&MarathonLogNode::poseAMCLCallback, this, _1)); 
     distance_total_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/total_distance", rclcpp::QoS(10));
-    time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time", rclcpp::QoS(10));
+    time_nav_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time_nav", rclcpp::QoS(10));
+    time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/clock", rclcpp::QoS(10));
+
     total_distance_ = 0.0;
 
     this->declare_parameter("total_distance_sum");
@@ -106,7 +108,14 @@ public:
     msg_time.sec = secs;
     msg_time.nanosec = nanosecs;
 
-    time_pub_->publish(msg_time);
+    time_nav_pub_->publish(msg_time);
+
+    builtin_interfaces::msg::Time msg_curr_time;
+
+    msg_curr_time.sec = current_time_.seconds();
+    msg_curr_time.nanosec = current_time_.nanoseconds();
+
+    time_pub_->publish(msg_curr_time);
 
   }
 
@@ -160,7 +169,7 @@ public:
 
 protected:
   rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_total_pub_;
-  rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr time_pub_;
+  rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr time_nav_pub_, time_pub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr amcl_pose_sub_;
 
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;

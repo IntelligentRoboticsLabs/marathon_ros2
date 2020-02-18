@@ -26,6 +26,7 @@ find_package(rcl_lifecycle REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
+find_package(tf2_ros REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -44,6 +45,7 @@ set(dependencies
   lifecycle_msgs
   rcl_lifecycle
   geometry_msgs
+  tf2_ros
 )
 
 if(BUILD_TESTING)
