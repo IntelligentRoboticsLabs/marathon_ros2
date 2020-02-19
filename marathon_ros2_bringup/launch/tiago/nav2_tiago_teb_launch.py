@@ -27,8 +27,7 @@ from launch.events import Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
-from nav2_common.launch import Node
-
+from launch_ros.actions import Node
 
 def generate_launch_description():
     # Get the launch directory
@@ -109,7 +108,7 @@ def generate_launch_description():
         description='Whether to start RVIZ')
     declare_cmd_vel_topic_cmd = DeclareLaunchArgument(
         'cmd_vel_topic',
-        default_value='cmd_vel_mux',
+        default_value='nav_vel',
         description='Command velocity topic')
 
 
@@ -141,6 +140,11 @@ def generate_launch_description():
                           'autostart': autostart,
                           'cmd_vel_topic': cmd_vel_topic}.items())        
 
+    marathon_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(marathon_launch_dir, 'nav2_marathon_launch.py')),
+        launch_arguments={'total_distance_sum': '0.25',
+                          'next_wp': '0'}.items())   
+
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -163,7 +167,9 @@ def generate_launch_description():
     # Add other nodes and processes we need
     ld.add_action(exit_event_handler)
 
-    # Add the actions to launch all of the navigation nodes
-    ld.add_action(bringup_cmd)
+    ld.add_action(marathon_cmd)
 
+    # Add the actions to launch all of the navigation nodes
+    ld.add_action(bringup_cmd)  
+    
     return ld
