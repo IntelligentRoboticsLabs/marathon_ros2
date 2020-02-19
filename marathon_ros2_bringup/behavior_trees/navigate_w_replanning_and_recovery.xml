@@ -18,7 +18,7 @@
         </RecoveryNode>
       </PipelineSequence>
       <SequenceStar name="RecoveryActions">
-        <RecoveryLogger/>
+        <!--<RecoveryLogger/>-->
         <ClearEntireCostmap service_name="local_costmap/clear_entirely_local_costmap"/>
         <ClearEntireCostmap service_name="global_costmap/clear_entirely_global_costmap"/>
         <Spin spin_dist="1.57"/>

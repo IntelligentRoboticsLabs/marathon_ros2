@@ -90,19 +90,19 @@ controller_server:
     DynamicFollowPath.debug_trajectory_details: True
     DynamicFollowPath.min_vel_x: 0.0
     DynamicFollowPath.min_vel_y: 0.0
-    DynamicFollowPath.max_vel_x: 0.36
+    DynamicFollowPath.max_vel_x: 0.46
     DynamicFollowPath.max_vel_y: 0.0
-    DynamicFollowPath.max_vel_theta: 0.55
+    DynamicFollowPath.max_vel_theta: 1.5
     DynamicFollowPath.min_speed_xy: 0.0
-    DynamicFollowPath.max_speed_xy: 0.26
+    DynamicFollowPath.max_speed_xy: 0.3
     DynamicFollowPath.min_speed_theta: 0.0
     # Add high threshold velocity for turtlebot 3 issue.
     # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
     DynamicFollowPath.acc_lim_x: 1.0
     DynamicFollowPath.acc_lim_y: 0.0
-    DynamicFollowPath.acc_lim_theta: 0.85
+    DynamicFollowPath.acc_lim_theta: 2.5
     DynamicFollowPath.decel_lim_y: 0.0
-    DynamicFollowPath.decel_lim_theta: -0.85
+    DynamicFollowPath.decel_lim_theta: -2.5
     DynamicFollowPath.vx_samples: 20
     DynamicFollowPath.vy_samples: 5
     DynamicFollowPath.vtheta_samples: 20
@@ -111,10 +111,11 @@ controller_server:
     DynamicFollowPath.angular_granularity: 0.025
     DynamicFollowPath.time_granularity: 0.05
     DynamicFollowPath.xy_goal_tolerance: 0.25
+    DynamicFollowPath.yaw_goal_tolerance: 0.25
     DynamicFollowPath.transform_tolerance: 0.2
     DynamicFollowPath.critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
     DynamicFollowPath.BaseObstacle.scale: 0.02
-    DynamicFollowPath.PathAlign.scale: 7.0
+    DynamicFollowPath.PathAlign.scale: 10.0
     DynamicFollowPath.GoalAlign.scale: 10.0
     DynamicFollowPath.PathDist.scale: 3.0
     DynamicFollowPath.GoalDist.scale: 4.0
@@ -137,7 +138,7 @@ local_costmap:
       resolution: 0.05
       plugin_names: ["obstacle_layer", "inflation_layer"]
       plugin_types: ["nav2_costmap_2d::ObstacleLayer", "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.27
+      robot_radius: 0.25
       inflation_layer:
         cost_scaling_factor: 3.0
       obstacle_layer:
@@ -170,19 +171,21 @@ global_costmap:
       plugin_names: [
         "static_layer",
         "obstacle_layer",
+        "stvl_layer",
         "inflation_layer"]
       plugin_types: [
         "nav2_costmap_2d::StaticLayer",
         "nav2_costmap_2d::ObstacleLayer",
+        "spatio_temporal_voxel_layer/SpatioTemporalVoxelLayer",
         "nav2_costmap_2d::InflationLayer"]
-      robot_radius: 0.27
+      robot_radius: 0.25
       resolution: 0.05
       stvl_layer:
         enabled: True
         voxel_decay: 15.0
         decay_model: 0
         voxel_size: 0.1
-        track_unknown_space: False
+        track_unknown_space: True
         max_obstacle_height: 2.0
         unknown_threshold: 15
         mark_threshold: 0
@@ -191,13 +194,13 @@ global_costmap:
         obstacle_range: 2.0
         origin_z: 0.0
         publish_voxel_map: False
-        transform_tolerance: 0.2
+        transform_tolerance: 1.0
         mapping_mode: False
         map_save_duration: 60.0
         observation_sources: pointcloud
         pointcloud:
           data_type: PointCloud2
-          topic: /xtion/depth_registered/points
+          topic: /xtion/depth/points
           marking: True
           clearing: True
           min_obstacle_height: 0.15
@@ -246,8 +249,8 @@ planner_server:
     planner_plugin_types: ["nav2_navfn_planner/NavfnPlanner"]
     planner_plugin_ids: ["GridBased"]
     use_sim_time: True
-    GridBased.tolerance: 2.0
-    GridBased.use_astar: false
+    GridBased.tolerance: 10.0
+    GridBased.use_astar: true
     GridBased.allow_unknown: true
 
 planner_server_rclcpp_node:

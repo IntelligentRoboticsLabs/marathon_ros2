@@ -78,7 +78,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_kobuki_params.yaml'),
+        default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_tiago_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     #declare_params_file_cmd = DeclareLaunchArgument(
@@ -140,6 +140,11 @@ def generate_launch_description():
                           'autostart': autostart,
                           'cmd_vel_topic': cmd_vel_topic}.items())        
 
+    marathon_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(os.path.join(marathon_launch_dir, 'nav2_marathon_launch.py')),
+        launch_arguments={'total_distance_sum': '0.25',
+                          'next_wp': '0'}.items())   
+
     # Create the launch description and populate
     ld = LaunchDescription()
 
@@ -162,7 +167,9 @@ def generate_launch_description():
     # Add other nodes and processes we need
     ld.add_action(exit_event_handler)
 
-    # Add the actions to launch all of the navigation nodes
-    ld.add_action(bringup_cmd)
+    ld.add_action(marathon_cmd)
 
+    # Add the actions to launch all of the navigation nodes
+    ld.add_action(bringup_cmd)  
+    
     return ld
