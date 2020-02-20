@@ -97,7 +97,7 @@ def generate_launch_description():
             namespace=namespace),
 
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'nav2_localization_launch.py')),
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'localization_launch.py')),
             launch_arguments={'namespace': namespace,
                               'map': map_yaml_file,
                               'use_sim_time': use_sim_time,

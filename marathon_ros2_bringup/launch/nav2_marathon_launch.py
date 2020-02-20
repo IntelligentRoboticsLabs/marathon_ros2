@@ -19,7 +19,6 @@ def generate_launch_description():
     marathon_launch_dir = os.path.join(marathon_dir, 'launch')
 
     # Create the launch configuration variables
-    total_distance_sum = LaunchConfiguration('total_distance_sum')
     next_wp = LaunchConfiguration('next_wp')
 
     autostart = LaunchConfiguration('autostart')
@@ -27,11 +26,6 @@ def generate_launch_description():
     declare_autostart_cmd = DeclareLaunchArgument(
         'autostart', default_value='true',
         description='Automatically startup the nav2 stack')
-
-    declare_total_distance_sum_cmd = DeclareLaunchArgument(
-        'total_distance_sum',
-        default_value= '0.25',
-        description='The distance accumulated in the experiment')
 
     declare_next_wp_cmd = DeclareLaunchArgument(
         'next_wp',
@@ -41,8 +35,6 @@ def generate_launch_description():
     log_node = launch_ros.actions.Node(
       package='marathon_log_nodes',
       node_executable='marathon_log_node',
-      parameters=[
-      {'total_distance_sum': total_distance_sum}]
     )
 
     wp_manager_node = launch_ros.actions.Node(
@@ -52,9 +44,14 @@ def generate_launch_description():
       {'next_wp': next_wp}]
     )
 
+    topics_2_csv_node = launch_ros.actions.Node(
+      package='marathon_ros2_csv',
+      node_executable='topics_2_csv'
+    )
+
     return launch.LaunchDescription([
-        declare_total_distance_sum_cmd,
         declare_next_wp_cmd,
         log_node,
-        wp_manager_node
+        wp_manager_node,
+        topics_2_csv_node
 ])
