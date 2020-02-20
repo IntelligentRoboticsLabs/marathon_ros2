@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+ 
+import os
+import os.path
 
 import rclpy
 from rclpy.node import Node
@@ -28,7 +31,7 @@ class Topics2csv(Node):
         super().__init__('topics_2_csv')
         self.distance_sub_ = self.create_subscription(
           Float64,
-          "/marathon_ros2/total_distance",
+          "/marathon_ros2/distance",
           self.distance_cb, 1)
         self.rec_flag_sub_ = self.create_subscription(
           Empty,
@@ -46,11 +49,21 @@ class Topics2csv(Node):
 
         #self.get_logger().info("DF_CLIENT: Ready!")
         self.fieldnames_ = ['time', 'distance', 'recovery_behavior_executed', 'vel_x', 'vel_theta']
-        self.now_str_ = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-        with open("topics_to_csv_" + self.now_str_ + ".csv" , mode='w+') as csv_file:
+
+        username = os.environ['USER']
+        self.path = "/home/" + username + "/marathon_data/"
+        file_list = sorted(os.listdir(self.path))
+        if len(file_list) == 0:
+          self.csv_filename = str(1) + ".csv"
+        else: 
+          last_file = file_list[-1]
+          self.last_file_number = int(last_file[:-4])
+          self.csv_filename = str(self.last_file_number + 1) + ".csv"
+
+        with open(self.path + self.csv_filename , mode='w+') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames_)
             writer.writeheader()
-        timer_period = 0.2 # seconds
+        timer_period = 1.0 # seconds
         timer = self.create_timer(timer_period, self.step)
 
     def destroy(self):
@@ -66,7 +79,7 @@ class Topics2csv(Node):
         self.vel_ = msg
   
     def step(self):
-        with open("topics_to_csv_" + self.now_str_ + ".csv", mode='a+') as csv_file:
+        with open(self.path + self.csv_filename, mode='a+') as csv_file:
           writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames_)
           writer.writerow({
               'time': self.get_clock().now().to_msg().sec,

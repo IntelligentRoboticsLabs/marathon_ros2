@@ -66,8 +66,6 @@
 
 #include "builtin_interfaces/msg/time.hpp"
 
-
-
 #include <cmath>
 
 using namespace std::chrono_literals;
@@ -83,14 +81,9 @@ public:
   : Node("marathon_log_node")
   {
     amcl_pose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/amcl_pose", rclcpp::QoS(10), std::bind(&MarathonLogNode::poseAMCLCallback, this, _1)); 
-    distance_total_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/total_distance", rclcpp::QoS(10));
+    distance_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/distance", rclcpp::QoS(10));
     time_nav_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time_nav", rclcpp::QoS(10));
     time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/clock", rclcpp::QoS(10));
-
-    total_distance_ = 0.0;
-
-    this->declare_parameter("total_distance_sum");
-    total_distance_ = this->get_parameter("total_distance_sum").get_value<float>();
     meters_ = 0.0;
   }
 
@@ -146,12 +139,10 @@ public:
     setOldposition(current_x, current_y);
     float miles = metersToMiles(meters_);
 
-    total_distance_ += miles;
+    std_msgs::msg::Float64 dist;
+    dist.data = miles;
 
-    std_msgs::msg::Float64 total_dist;
-    total_dist.data = total_distance_;
-
-    distance_total_pub_->publish(total_dist);
+    distance_pub_->publish(dist);
 
     meters_ = 0.0;
   
@@ -168,7 +159,7 @@ public:
 
 
 protected:
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_total_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_pub_;
   rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr time_nav_pub_, time_pub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr amcl_pose_sub_;
 
@@ -178,7 +169,6 @@ protected:
     
   float old_x, old_y;
   float meters_;
-  float total_distance_;
 
   rclcpp::Time started_time_;
 
