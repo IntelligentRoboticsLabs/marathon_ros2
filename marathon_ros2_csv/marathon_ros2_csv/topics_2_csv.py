@@ -43,7 +43,7 @@ class Topics2csv(Node):
           "/cmd_vel",
           self.vel_cb, 1)
 
-        self.total_distance_ = 0.0
+        self.distance_ = 0.0
         self.rec_flag_ = ''
         self.vel_ = Twist()
 
@@ -70,7 +70,7 @@ class Topics2csv(Node):
         super().destroy_node()
 
     def distance_cb(self, msg):
-        self.total_distance_ = msg.data
+        self.distance_ = msg.data
     
     def rec_flag_cb(self, msg):
         self.rec_flag_ = '1'
@@ -83,11 +83,12 @@ class Topics2csv(Node):
           writer = csv.DictWriter(csv_file, fieldnames=self.fieldnames_)
           writer.writerow({
               'time': self.get_clock().now().to_msg().sec,
-              'distance': self.total_distance_,
+              'distance': self.distance_,
               'recovery_behavior_executed': self.rec_flag_,
               'vel_x': self.vel_.linear.x,
               'vel_theta':self.vel_.angular.z})
           self.rec_flag_ = ''
+          self.distance_ = 0.0
 
 def main(args=None):
     rclpy.init(args=args)

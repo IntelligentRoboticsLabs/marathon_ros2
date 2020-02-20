@@ -85,6 +85,8 @@ public:
     time_nav_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time_nav", rclcpp::QoS(10));
     time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/clock", rclcpp::QoS(10));
     meters_ = 0.0;
+    old_x = 0.0;
+    old_y = 0.0;
   }
 
 
@@ -134,11 +136,16 @@ public:
 
     current_x = msg->pose.pose.position.x;
     current_y = msg->pose.pose.position.y;
-
-    meters_ = calculateDistance(current_x, current_y, old_x, old_y);
-    setOldposition(current_x, current_y);
-    float miles = metersToMiles(meters_);
-
+    float miles = 0.0;
+    if (old_x != 0.0 && old_y != 0.0)
+    {
+      meters_ = calculateDistance(current_x, current_y, old_x, old_y);
+      setOldposition(current_x, current_y);
+      miles = metersToMiles(meters_);
+    }
+    else
+      setOldposition(current_x, current_y);
+    
     std_msgs::msg::Float64 dist;
     dist.data = miles;
 
