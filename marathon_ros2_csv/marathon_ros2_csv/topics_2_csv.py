@@ -40,7 +40,7 @@ class Topics2csv(Node):
         
         self.vel_sub_ = self.create_subscription(
           Twist,
-          "/cmd_vel",
+          "/nav_vel",
           self.vel_cb, 1)
 
         self.distance_ = 0.0
@@ -52,12 +52,15 @@ class Topics2csv(Node):
 
         username = os.environ['USER']
         self.path = "/home/" + username + "/marathon_data/"
-        file_list = sorted(os.listdir(self.path))
-        if len(file_list) == 0:
+        filename_list = []
+        for file in os.listdir(self.path):
+          filename_list.append(int(file[:-4]))
+        filename_list_sorted = sorted(filename_list)
+
+        if len(filename_list_sorted) == 0:
           self.csv_filename = str(1) + ".csv"
         else: 
-          last_file = file_list[-1]
-          self.last_file_number = int(last_file[:-4])
+          self.last_file_number = filename_list_sorted[-1]
           self.csv_filename = str(self.last_file_number + 1) + ".csv"
 
         with open(self.path + self.csv_filename , mode='w+') as csv_file:

@@ -60,38 +60,72 @@ public:
   : Node("waypoint_manager"), goal_sended_(false), starting_(false)
   {   
     geometry_msgs::msg::PoseStamped p;
-    p.pose.position.x = 20.0;
-    p.pose.position.y = 46.5;
+    p.pose.position.x = 20.5;
+    p.pose.position.y = 47.12;
+    p.pose.orientation.w = 0.977;
+
     p.header.frame_id = "map";
     waypoints_[0] = p;
 
-    p.pose.position.x = 27.8;
-    p.pose.position.y = 57.1;
+    p.pose.position.x = 28.9;
+    p.pose.position.y = 56.52;
+    p.pose.orientation.w = 0.25;
+
     waypoints_[1] = p;
 
-    p.pose.position.x = 34.3;
-    p.pose.position.y = 57.6;
+    p.pose.position.x = 57.89;
+    p.pose.position.y = 41.75;
+    p.pose.orientation.w = -0.57;
+
     waypoints_[2] = p;
     
-    p.pose.position.x = 31.8;
-    p.pose.position.y = 63.8;
+    p.pose.position.x = 93.22;
+    p.pose.position.y = 17.30;
+    p.pose.orientation.w = -0.57;
+
     waypoints_[3] = p;
 
-    p.pose.position.x = 38.7;
-    p.pose.position.y = 74.6;
+    p.pose.position.x = 106.24;
+    p.pose.position.y = 8.04;
+    p.pose.orientation.w = -0.57;
+
     waypoints_[4] = p;
 
-    p.pose.position.x = 26.5;
-    p.pose.position.y = 63.0;
+    p.pose.position.x = 93.22;
+    p.pose.position.y = 17.30;
+    p.pose.orientation.w = 1.00;
     waypoints_[5] = p;
 
-    p.pose.position.x = 21.7;
-    p.pose.position.y = 49.0;
+    p.pose.position.x = 57.89;
+    p.pose.position.y = 41.75;
+    p.pose.orientation.w = 1.0;
     waypoints_[6] = p;
 
-    p.pose.position.x = 10.3;
-    p.pose.position.y = 51.4;
+    p.pose.position.x = 33.51;
+    p.pose.position.y = 61.13;
+    p.pose.orientation.w = 0.78;
     waypoints_[7] = p;
+
+    p.pose.position.x = 38.32;
+    p.pose.position.y = 73.28;
+    p.pose.orientation.w = 0.94;
+    waypoints_[8] = p;
+
+    p.pose.position.x = 28.92;
+    p.pose.position.y = 64.73;
+    p.pose.orientation.w = -2.17;
+
+    waypoints_[9] = p;
+
+    p.pose.position.x = 20.89;
+    p.pose.position.y = 47.65;
+    p.pose.orientation.w = -2.17;
+    waypoints_[10] = p;
+
+    p.pose.position.x = 10.97;
+    p.pose.position.y = 51.26;
+    p.pose.orientation.w = 2.47;
+    waypoints_[11] = p;
 
     this->declare_parameter("next_wp");
     next_wp_ = this->get_parameter("next_wp").get_value<int>();
@@ -122,13 +156,13 @@ public:
       this->get_node_graph_interface(),
       this->get_node_logging_interface(),
       this->get_node_waitables_interface(),
-      "NavigateToPose");
+      "/navigate_to_pose");
        
     bool is_action_server_ready = false;
 
     do {
       RCLCPP_WARN(this->get_logger(), "Waiting for action server");
-      is_action_server_ready = navigation_action_client_->wait_for_action_server(std::chrono::seconds(5));
+      is_action_server_ready = navigation_action_client_->wait_for_action_server(std::chrono::seconds(1));
     } while (!is_action_server_ready);
 
     RCLCPP_WARN(this->get_logger(), "Starting navigation");
