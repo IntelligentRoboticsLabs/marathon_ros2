@@ -91,11 +91,11 @@ controller_server:
     FollowPath.debug_trajectory_details: True
     FollowPath.min_vel_x: 0.0
     FollowPath.min_vel_y: 0.0
-    FollowPath.max_vel_x: 0.4
+    FollowPath.max_vel_x: 0.5
     FollowPath.max_vel_y: 0.0
     FollowPath.max_vel_theta: 1.0
     FollowPath.min_speed_xy: 0.0
-    FollowPath.max_speed_xy: 0.36
+    FollowPath.max_speed_xy: 0.46
     FollowPath.min_speed_theta: 0.0
     # Add high threshold velocity for turtlebot 3 issue.
     # https://github.com/ROBOTIS-GIT/turtlebot3_simulations/issues/75
