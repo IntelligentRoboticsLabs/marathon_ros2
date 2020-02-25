@@ -8,12 +8,13 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(rclcpp_action REQUIRED)
-
+find_package(tf2 REQUIRED)
 
 set(dependencies
     rclcpp
     rclcpp_action
     nav2_msgs
+    tf2
 )
 
 add_executable(wp_manager_node src/wp_manager.cpp)

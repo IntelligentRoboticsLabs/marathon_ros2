@@ -51,6 +51,9 @@
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "std_msgs/msg/empty.h"
 
+#include <tf2/LinearMath/Quaternion.h>
+#include "tf2/convert.h"
+
 using namespace std::placeholders;
 
 class WaypointManager: public rclcpp::Node
@@ -59,73 +62,18 @@ public:
   explicit WaypointManager()
   : Node("waypoint_manager"), goal_sended_(false), starting_(false)
   {   
-    geometry_msgs::msg::PoseStamped p;
-    p.pose.position.x = 20.5;
-    p.pose.position.y = 47.12;
-    p.pose.orientation.w = 0.977;
-
-    p.header.frame_id = "map";
-    waypoints_[0] = p;
-
-    p.pose.position.x = 28.9;
-    p.pose.position.y = 56.52;
-    p.pose.orientation.w = 0.25;
-
-    waypoints_[1] = p;
-
-    p.pose.position.x = 57.89;
-    p.pose.position.y = 41.75;
-    p.pose.orientation.w = -0.57;
-
-    waypoints_[2] = p;
-    
-    p.pose.position.x = 93.22;
-    p.pose.position.y = 17.30;
-    p.pose.orientation.w = -0.57;
-
-    waypoints_[3] = p;
-
-    p.pose.position.x = 106.24;
-    p.pose.position.y = 8.04;
-    p.pose.orientation.w = -0.57;
-
-    waypoints_[4] = p;
-
-    p.pose.position.x = 93.22;
-    p.pose.position.y = 17.30;
-    p.pose.orientation.w = 1.00;
-    waypoints_[5] = p;
-
-    p.pose.position.x = 57.89;
-    p.pose.position.y = 41.75;
-    p.pose.orientation.w = 1.0;
-    waypoints_[6] = p;
-
-    p.pose.position.x = 33.51;
-    p.pose.position.y = 61.13;
-    p.pose.orientation.w = 0.78;
-    waypoints_[7] = p;
-
-    p.pose.position.x = 38.32;
-    p.pose.position.y = 73.28;
-    p.pose.orientation.w = 0.94;
-    waypoints_[8] = p;
-
-    p.pose.position.x = 28.92;
-    p.pose.position.y = 64.73;
-    p.pose.orientation.w = -2.17;
-
-    waypoints_[9] = p;
-
-    p.pose.position.x = 20.89;
-    p.pose.position.y = 47.65;
-    p.pose.orientation.w = -2.17;
-    waypoints_[10] = p;
-
-    p.pose.position.x = 10.97;
-    p.pose.position.y = 51.26;
-    p.pose.orientation.w = 2.47;
-    waypoints_[11] = p;
+    waypoints_[0] = newWp(20.5, 47.12, 0.977);
+    waypoints_[1] = newWp(28.9, 56.52, 0.25);
+    waypoints_[2] = newWp(57.89, 41.75, -0.57);
+    waypoints_[3] = newWp(93.22, 17.30, -0.57);
+    waypoints_[4] = newWp(106.24, 8.04, -0.57);
+    waypoints_[5] = newWp(93.22, 17.30, 2.55);
+    waypoints_[6] = newWp(57.89, 41.75, 2.55);
+    waypoints_[7] = newWp(33.51, 61.13, 1.69);
+    waypoints_[8] = newWp(38.32, 73.28, 0.94);
+    waypoints_[9] = newWp(28.92, 64.73, -2.17);
+    waypoints_[10] = newWp(20.5, 47.12, -2.17);
+    waypoints_[11] = newWp(10.97, 51.26, 2.47);
 
     this->declare_parameter("next_wp");
     next_wp_ = this->get_parameter("next_wp").get_value<int>();
@@ -135,6 +83,24 @@ public:
       1,
       std::bind(&WaypointManager::start_cb, this, _1));  
 
+  }
+
+  geometry_msgs::msg::PoseStamped newWp(float x, float y, float yaw)
+  {
+    tf2::Quaternion q;
+    geometry_msgs::msg::PoseStamped p;
+    
+    p.header.frame_id = "map";
+    p.pose.position.x = x;
+    p.pose.position.y = y;
+    q.setRPY(0, 0, yaw);
+    q.normalize();
+    p.pose.orientation.x = q.x();
+    p.pose.orientation.y = q.y();
+    p.pose.orientation.z = q.z();
+    p.pose.orientation.w = q.w();
+
+    return p;
   }
 
   void start_cb(const std_msgs::msg::Empty::SharedPtr msg)
