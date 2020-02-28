@@ -1,5 +1,7 @@
 # marathon_ros2
 
+[![](https://img.youtube.com/vi/tXp8wFZr68M/0.jpg)](https://www.youtube.com/watch?v=tXp8wFZr68M&feature=youtu.be "Click to play on You Tube")
+
 ## Working components for the experiment
 
 - [x] Tiago drivers in ROS
