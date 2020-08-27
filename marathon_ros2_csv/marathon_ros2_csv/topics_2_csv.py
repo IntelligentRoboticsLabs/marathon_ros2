@@ -42,6 +42,7 @@ class Topics2csv(Node):
           Twist,
           "/nav_vel",
           self.vel_cb, 1)
+          
 
         self.distance_ = 0.0
         self.rec_flag_ = ''

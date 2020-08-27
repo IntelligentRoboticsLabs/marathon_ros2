@@ -44,11 +44,3 @@ data = pd.DataFrame(source)
 #print(data)
 sns.relplot(x="time", y="distance", kind="line", data=data)
 plt.show()
-
-#sns.catplot(x="Prueba", y="Resultado", hue="Diagnóstico",
-#            kind="bar", data=data)
-#plt.show()
-#
-#sns.catplot(x="Prueba", y="Resultado", hue="Sexo",
-#            kind="bar", data=data)
-#plt.show()
