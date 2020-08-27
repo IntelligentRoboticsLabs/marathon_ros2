@@ -89,7 +89,7 @@ def generate_launch_description():
     declare_bt_xml_cmd = DeclareLaunchArgument(
         'bt_xml_file',
         default_value=os.path.join(
-            get_package_share_directory('marathon_ros2_bringup'),
+            get_package_share_directory('nav2_bt_navigator'),
             'behavior_trees', 'navigate_w_replanning_and_recovery.xml'),
         description='Full path to the behavior tree xml file to use')
 
@@ -115,7 +115,7 @@ def generate_launch_description():
     start_rviz_cmd = Node(
         condition=IfCondition(use_rviz),
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         arguments=['-d', rviz_config_file],
         output='log',
         remappings=[('/tf', 'tf'),
@@ -167,7 +167,7 @@ def generate_launch_description():
     # Add other nodes and processes we need
     ld.add_action(exit_event_handler)
 
-    ld.add_action(marathon_cmd)
+    #ld.add_action(marathon_cmd)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd)  
