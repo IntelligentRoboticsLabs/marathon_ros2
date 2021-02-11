@@ -42,7 +42,7 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
-    bt_xml_file = LaunchConfiguration('bt_xml_file')
+    default_bt_xml_file = LaunchConfiguration('default_bt_xml_file')
     autostart = LaunchConfiguration('autostart')
     cmd_vel_topic = LaunchConfiguration('cmd_vel_topic')
 
@@ -78,7 +78,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(marathon_dir, 'params', 'nav2_marathon_tiago_params.yaml'),
+        default_value=os.path.join(marathon_dir, 'params', 'nav2_pp_tiago_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     #declare_params_file_cmd = DeclareLaunchArgument(
@@ -87,9 +87,9 @@ def generate_launch_description():
     #    description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     declare_bt_xml_cmd = DeclareLaunchArgument(
-        'bt_xml_file',
+        'default_bt_xml_file',
         default_value=os.path.join(
-            get_package_share_directory('marathon_ros2_bringup'),
+            get_package_share_directory('nav2_bt_navigator'),
             'behavior_trees', 'navigate_w_replanning_and_recovery.xml'),
         description='Full path to the behavior tree xml file to use')
 
@@ -115,7 +115,7 @@ def generate_launch_description():
     start_rviz_cmd = Node(
         condition=IfCondition(use_rviz),
         package='rviz2',
-        node_executable='rviz2',
+        executable='rviz2',
         arguments=['-d', rviz_config_file],
         output='log',
         remappings=[('/tf', 'tf'),
@@ -136,14 +136,13 @@ def generate_launch_description():
                           'map': map_yaml_file,
                           'use_sim_time': use_sim_time,
                           'params_file': params_file,
-                          'bt_xml_file': bt_xml_file,
+                          'bt_xml_file': default_bt_xml_file,
                           'autostart': autostart,
                           'cmd_vel_topic': cmd_vel_topic}.items())        
 
-    marathon_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(marathon_launch_dir, 'nav2_marathon_launch.py')),
-        launch_arguments={'total_distance_sum': '0.25',
-                          'next_wp': '0'}.items())   
+    # contextual_cmd = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource(os.path.join(marathon_launch_dir, 'nav2_contextual_launch.py')),
+    #     launch_arguments={'next_wp': '0'}.items())   
 
     # Create the launch description and populate
     ld = LaunchDescription()
@@ -167,7 +166,7 @@ def generate_launch_description():
     # Add other nodes and processes we need
     ld.add_action(exit_event_handler)
 
-    ld.add_action(marathon_cmd)
+    # ld.add_action(contextual_cmd)
 
     # Add the actions to launch all of the navigation nodes
     ld.add_action(bringup_cmd)  

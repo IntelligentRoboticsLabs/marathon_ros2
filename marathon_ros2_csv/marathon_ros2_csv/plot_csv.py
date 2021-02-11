@@ -1,46 +1,76 @@
-from IPython.core.display import HTML, SVG
+#!/usr/bin/env python
+# coding: utf-8
+
 import pandas as pd
 import numpy as np
-import xport
-import IPython
-from ipywidgets import Layout
-from ipywidgets import widgets
-from IPython.display import display
-
-import matplotlib.ticker as ticker
-import matplotlib.cm as cm
-import matplotlib as mpl
-from matplotlib.gridspec import GridSpec
-
 import matplotlib.pyplot as plt
-import seaborn as sns
+import os
+exp_folder = "exp_3/teb_star/"
+url = "/home/ubuntu/exp_data/" + exp_folder
+n = len(os.listdir(url)) + 1
+numberofcsvs = range(1,n)
+extension = ".csv"
+df=pd.DataFrame(columns=["time","distance","recoveries_executed","vel_x","vel_theta", "scan_min"])
+for i in numberofcsvs:
+    url_num=url+str(i)+extension
+    df_ = pd.read_csv(url_num, keep_default_na= False)
+    df = pd.concat([df, df_])
 
-input = pd.read_csv('/home/jgines/Desktop/topics_to_csv_12_02_2020_17_21_44.csv')
-source = []
-#rango dinámico
-for i in range(0,1857):
-    for l in input:
-        #if l == 'time':
-        #    continue
-        #if l == 'distance':
-        #    continue
-        #if l == 'recovery_behavior_executed':
-        #    continue
-        #if l == 'vel_x':
-        #    continue
-        #if l == 'vel_theta':
-        #    continue
+df.head(100)
 
-        new_reg = {
-            'time':i,
-            'distance':input['distance'][i],
-            'recovery_behavior_executed':input['recovery_behavior_executed'][i],
-            'vel_x':input['vel_x'][i],
-            'vel_theta':input['vel_theta'][i]
-            }
-        source.append(new_reg)
+i = 0
+for n in df['time'].values:
+  df['time'].values[i] = i
+  i = i + 1
 
-data = pd.DataFrame(source)
-#print(data)
-sns.relplot(x="time", y="distance", kind="line", data=data)
-plt.show()
+
+#plt.plot(df['distance'].values) #distancia por instante
+#plt.xlabel('Time (s)')
+#plt.ylabel('Distance (miles)')
+#plt.title('Distance traveled')
+#plt.savefig("figures/distance.pdf")
+#plt.clf()
+
+#plt.plot(df['distance'].values.cumsum()) # distancia acumulada
+#plt.xlabel('Time (s)')
+#plt.ylabel('Distance (miles)')
+#plt.title('Distance traveled')
+#plt.savefig("figures/distance_cumsum.pdf")
+#plt.clf()
+
+
+
+#plt.plot(df['distance'].values.cumsum(), linewidth=2) # distancia acumulada
+#plt.xlabel('Time (s)')
+#plt.ylabel('Distance (miles)')
+#plt.title('Distance traveled')
+#plt.savefig("figures/distance_cumsum.pdf")
+#
+#total_dist = df['distance'].values.cumsum()
+#
+#test = np.empty(len(total_dist), dtype=object)
+#
+#i = 0
+#for n in df['recovery_behavior_executed'].values:
+#  if n == '1':
+#    test[i] = total_dist[i]
+#  i = i + 1
+#
+#plt.plot(test, color='black', marker='|', markersize=7) 
+#plt.xlabel('Time (s)')
+#plt.ylabel('Distance (miles)')
+#plt.title('Recovery behavior executed on time')
+#plt.savefig("figures/behaviors_vs_distance.pdf")
+#plt.clf()
+
+#i = 0
+#for n in df['psi_personal'].values:
+#    df['psi_personal'].values[i] = n * 100.0
+#    i = i + 1
+
+print ("-------------- Extracted data from " + exp_folder + " ------------")
+print("Total time (s): " + str((df['time'].values[-1] - df['time'].values[0])))
+print("Total distance (m): " + str(df['distance'].values.cumsum()[-1]))
+print("Linear vel: " + str(df['vel_x'].mean()) + " (" + str(df['vel_x'].std()) + ")")
+print("Linear vel max: " + str(df['vel_x'].max()))
+print("Min distance to an obstacle: " + str(df['scan_min'].min()))
