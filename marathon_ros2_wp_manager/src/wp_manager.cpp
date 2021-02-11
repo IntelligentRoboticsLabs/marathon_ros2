@@ -187,7 +187,7 @@ public:
     
 
     if (rclcpp::spin_until_future_complete(shared_from_this(), goal_handle_future_) !=
-        rclcpp::executor::FutureReturnCode::SUCCESS)
+        rclcpp::FutureReturnCode::SUCCESS)
     {
       RCLCPP_ERROR(get_logger(), "send goal call failed :(");
       goal_sended_ = false;
