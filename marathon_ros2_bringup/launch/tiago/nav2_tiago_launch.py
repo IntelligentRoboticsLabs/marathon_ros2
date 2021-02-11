@@ -42,7 +42,7 @@ def generate_launch_description():
     map_yaml_file = LaunchConfiguration('map')
     use_sim_time = LaunchConfiguration('use_sim_time')
     params_file = LaunchConfiguration('params_file')
-    bt_xml_file = LaunchConfiguration('bt_xml_file')
+    default_bt_xml_file = LaunchConfiguration('default_bt_xml_file')
     autostart = LaunchConfiguration('autostart')
     cmd_vel_topic = LaunchConfiguration('cmd_vel_topic')
 
@@ -78,7 +78,7 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(marathon_dir, 'params', 'nav2_dynamic_follow_params.yaml'),
+        default_value=os.path.join(marathon_dir, 'params', 'nav2_pp_tiago_params.yaml'),
         description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     #declare_params_file_cmd = DeclareLaunchArgument(
@@ -87,10 +87,10 @@ def generate_launch_description():
     #    description='Full path to the ROS2 parameters file to use for all launched nodes')
 
     declare_bt_xml_cmd = DeclareLaunchArgument(
-        'bt_xml_file',
+        'default_bt_xml_file',
         default_value=os.path.join(
             get_package_share_directory('nav2_bt_navigator'),
-            'behavior_trees', 'follow_point.xml'),
+            'behavior_trees', 'navigate_w_replanning_and_recovery.xml'),
         description='Full path to the behavior tree xml file to use')
 
     declare_autostart_cmd = DeclareLaunchArgument(
@@ -136,7 +136,7 @@ def generate_launch_description():
                           'map': map_yaml_file,
                           'use_sim_time': use_sim_time,
                           'params_file': params_file,
-                          'bt_xml_file': bt_xml_file,
+                          'bt_xml_file': default_bt_xml_file,
                           'autostart': autostart,
                           'cmd_vel_topic': cmd_vel_topic}.items())        
 
