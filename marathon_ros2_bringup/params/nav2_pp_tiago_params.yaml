@@ -113,7 +113,7 @@ controller_server:
       stateful: True
     FollowPath:
       plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
-      desired_linear_vel: 0.4
+      desired_linear_vel: 0.6
       max_linear_accel: 2.0
       max_linear_decel: 2.0
       lookahead_dist: 0.6
@@ -126,7 +126,7 @@ controller_server:
       min_approach_linear_velocity: 0.05
       use_approach_linear_velocity_scaling: true
       max_allowed_time_to_collision: 1.0
-      use_regulated_linear_velocity_scaling: true
+      use_regulated_linear_velocity_scaling: false
       use_cost_regulated_linear_velocity_scaling: false
       regulated_linear_scaling_min_radius: 0.9
       regulated_linear_scaling_min_speed: 0.25
