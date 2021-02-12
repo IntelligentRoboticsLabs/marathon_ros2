@@ -21,6 +21,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(nav2_msgs REQUIRED)
+find_package(nav2_util REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(rcl_lifecycle REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
@@ -46,6 +47,7 @@ set(dependencies
   rcl_lifecycle
   geometry_msgs
   tf2_ros
+  nav2_util
 )
 
 if(BUILD_TESTING)

@@ -56,6 +56,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float64.hpp"
+#include "nav_msgs/msg/path.hpp"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 
@@ -65,7 +66,7 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/transform_broadcaster.h"
 #include "tf2_ros/message_filter.h"
-
+#include "nav2_util/geometry_utils.hpp"
 
 #include "builtin_interfaces/msg/time.hpp"
 
@@ -81,12 +82,15 @@ class MarathonLogNode : public rclcpp::Node
 {
 public:
   MarathonLogNode()
-  : Node("marathon_log_node")
+  : Node("marathon_log_node"), path_()
   {
     amcl_pose_sub_ = create_subscription<geometry_msgs::msg::PoseWithCovarianceStamped>("/amcl_pose", rclcpp::QoS(10), std::bind(&MarathonLogNode::poseAMCLCallback, this, _1)); 
+    path_sub_ = create_subscription<nav_msgs::msg::Path>("/plan", rclcpp::QoS(10), std::bind(&MarathonLogNode::path_callback, this, _1)); 
     distance_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/distance", rclcpp::QoS(10));
     time_nav_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/time_nav", rclcpp::QoS(10));
     time_pub_ = create_publisher<builtin_interfaces::msg::Time>("/marathon_ros2/clock", rclcpp::QoS(10));
+    path_distance_pub_ = create_publisher<std_msgs::msg::Float64>("/marathon_ros2/path_distance", rclcpp::QoS(10));
+
     meters_ = 0.0;
     old_x = 0.0;
     old_y = 0.0;
@@ -149,6 +153,14 @@ public:
     else
       setOldposition(current_x, current_y);
     
+    if (path_) 
+    {
+      std_msgs::msg::Float64 path_dist;
+      path_dist.data = get_path_distance(path_, msg->pose.pose.position);
+      path_distance_pub_->publish(path_dist);
+    }
+    
+
     std_msgs::msg::Float64 dist;
     dist.data = miles;
 
@@ -156,6 +168,24 @@ public:
 
     meters_ = 0.0;
   
+  }
+
+  void path_callback(const nav_msgs::msg::Path::SharedPtr msg)
+  {
+    if (!path_)
+    {
+      path_ = msg;
+    }
+  }
+
+  float get_path_distance(nav_msgs::msg::Path::SharedPtr path, geometry_msgs::msg::Point robot_position)
+  {
+    std::vector<float> path_dis_v;
+    for (auto pose : path->poses)
+    {
+      path_dis_v.push_back(nav2_util::geometry_utils::euclidean_distance(pose.pose.position, robot_position));
+    }
+    return *std::min(path_dis_v.begin(), path_dis_v.end());
   }
 
   void step()
@@ -169,13 +199,15 @@ public:
 
 
 protected:
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_pub_;
+  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr distance_pub_, path_distance_pub_;
   rclcpp::Publisher<builtin_interfaces::msg::Time>::SharedPtr time_nav_pub_, time_pub_;
   rclcpp::Subscription<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr amcl_pose_sub_;
+  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
 
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
   std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
   rclcpp::TimerBase::SharedPtr timer_;
+  std::shared_ptr<nav_msgs::msg::Path> path_; 
     
   float old_x, old_y;
   float meters_;
