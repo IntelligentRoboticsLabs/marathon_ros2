@@ -34,19 +34,19 @@ def generate_launch_description():
 
     log_node = launch_ros.actions.Node(
       package='marathon_log_nodes',
-      node_executable='marathon_log_node',
+      executable='marathon_log_node',
     )
 
     wp_manager_node = launch_ros.actions.Node(
       package='marathon_ros2_wp_manager',
-      node_executable='wp_manager_node',
+      executable='wp_manager_node',
       parameters=[
       {'next_wp': next_wp}]
     )
 
     topics_2_csv_node = launch_ros.actions.Node(
       package='marathon_ros2_csv',
-      node_executable='topics_2_csv'
+      executable='topics_2_csv'
     )
 
     return launch.LaunchDescription([

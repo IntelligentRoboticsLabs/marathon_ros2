@@ -39,19 +39,18 @@ class Topics2csv(Node):
 
         amcl_qos_profile = QoSProfile(
         depth=1,
-        reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_RELIABLE,
-        durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL)
+        # reliability=QoSDurabilityPolicy.RELIABLE,
+        durability=QoSDurabilityPolicy.TRANSIENT_LOCAL)
 
         scan_qos_profile = QoSProfile(
         depth=1,
-        reliability=QoSReliabilityPolicy.RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT,
-        durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_VOLATILE)
+        reliability=QoSReliabilityPolicy.BEST_EFFORT,
+        durability=QoSDurabilityPolicy.VOLATILE)
 
         self.amcl_sub_ = self.create_subscription(
           PoseWithCovarianceStamped,
           "/amcl_pose",
-          self.amcl_cb,
-          amcl_qos_profile)
+          self.amcl_cb, 1)
 
         self.scan_sub_ = self.create_subscription(
           LaserScan,

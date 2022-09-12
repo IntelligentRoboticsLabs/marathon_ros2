@@ -85,8 +85,17 @@ public:
     waypoints_[5] = newWp(32, 63.7, 0.675 + M_PI/2);
     waypoints_[6] = newWp(26.4, 58.2, 0.675 + M_PI);
 
-    declare_parameter("next_wp");
-    next_wp_ = get_parameter("next_wp").get_value<int>();
+    // waypoints_[0] = newWp(-0-65, -1.8, 0.675);
+    // waypoints_[1] = newWp(0.85, -1.87, 0.675);
+    // waypoints_[2] = newWp(1.82, -0.56, 0.675);
+    // waypoints_[3] = newWp(1.86, 0.51, 0.675);
+    // waypoints_[4] = newWp(0.62, 1.75, 0.675 - M_PI/2);
+    // waypoints_[5] = newWp(-0.56, 1.80, 0.675 + M_PI/2);
+    // waypoints_[6] = newWp(-2.0, 0.48, 0.675 + M_PI);
+
+
+    declare_parameter<int>("next_wp", 0);
+    get_parameter("next_wp", next_wp_);
 
     start_sub_ = create_subscription<std_msgs::msg::Empty>(
       "/start_navigate",
