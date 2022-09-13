@@ -77,10 +77,11 @@ public:
     //waypoints_[2] = newWp(26.4, 58.2, 0.675 + M_PI);
     //waypoints_[3] = newWp(27.76, 55.39, 0.675);
 
+    //waypoints_[0] = newWp(2.56, 50.6, 0.675);
     waypoints_[0] = newWp(12.4365, 50.3792, 0.675);
     waypoints_[1] = newWp(19.81, 46.06, 0.675);
     waypoints_[2] = newWp(27.76, 55.39, 0.675);
-    waypoints_[3] = newWp(37.3, 55.4, 0.675 - M_PI/2);
+    waypoints_[3] = newWp(107.07, 7.81266, 2.56);
     waypoints_[4] = newWp(32, 63.7, 0.675 + M_PI/2);
     waypoints_[5] = newWp(26.4, 58.2, 0.675 + M_PI);
 
